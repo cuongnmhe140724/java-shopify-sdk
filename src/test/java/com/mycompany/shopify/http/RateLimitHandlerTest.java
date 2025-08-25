@@ -9,6 +9,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpHeaders;
 
 import java.time.Duration;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -74,11 +75,12 @@ class RateLimitHandlerTest {
             // Arrange
             String endpoint = "/products.json";
             RateLimitHandler.RequestType requestType = RateLimitHandler.RequestType.REST;
-            
-            // Act & Assert - Should block 41st request
-            for (int i = 0; i < 40; i++) {
-                rateLimitHandler.canMakeRequest(endpoint, requestType);
-            }
+            HttpHeaders responseHeaders = new HttpHeaders();
+            responseHeaders.add("X-Shopify-Shop-Api-Call-Limit", "40/40");
+
+            // Act & Assert - Use up all REST requests
+            rateLimitHandler.recordRequest(endpoint, requestType, responseHeaders);
+            rateLimitHandler.canMakeRequest(endpoint, requestType);
             
             assertFalse(rateLimitHandler.canMakeRequest(endpoint, requestType),
                 "41st request should be blocked");
@@ -90,11 +92,12 @@ class RateLimitHandlerTest {
             // Arrange
             String endpoint = "/products.json";
             RateLimitHandler.RequestType requestType = RateLimitHandler.RequestType.REST;
-            
-            // Use up all requests
-            for (int i = 0; i < 40; i++) {
-                rateLimitHandler.canMakeRequest(endpoint, requestType);
-            }
+            HttpHeaders responseHeaders = new HttpHeaders();
+            responseHeaders.add("X-Shopify-Shop-Api-Call-Limit", "40/40");
+
+            // Act & Assert - Use up all REST requests
+            rateLimitHandler.recordRequest(endpoint, requestType, responseHeaders);
+            rateLimitHandler.canMakeRequest(endpoint, requestType);
             
             // Verify blocked
             assertFalse(rateLimitHandler.canMakeRequest(endpoint, requestType));
@@ -116,11 +119,12 @@ class RateLimitHandlerTest {
             String endpoint1 = "/products.json";
             String endpoint2 = "/orders.json";
             RateLimitHandler.RequestType requestType = RateLimitHandler.RequestType.REST;
-            
-            // Act & Assert - Use up all requests for endpoint1
-            for (int i = 0; i < 40; i++) {
-                rateLimitHandler.canMakeRequest(endpoint1, requestType);
-            }
+            HttpHeaders responseHeaders = new HttpHeaders();
+            responseHeaders.add("X-Shopify-Shop-Api-Call-Limit", "40/40");
+
+            // Act & Assert - Use up all REST requests
+            rateLimitHandler.recordRequest(endpoint1, requestType, responseHeaders);
+            rateLimitHandler.canMakeRequest(endpoint1, requestType);
             
             // endpoint1 should be blocked
             assertFalse(rateLimitHandler.canMakeRequest(endpoint1, requestType));
@@ -134,11 +138,13 @@ class RateLimitHandlerTest {
         void shouldHandleDifferentRequestTypesSeparately() {
             // Arrange
             String endpoint = "/api";
-            
+            RateLimitHandler.RequestType requestType = RateLimitHandler.RequestType.REST;
+            HttpHeaders responseHeaders = new HttpHeaders();
+            responseHeaders.add("X-Shopify-Shop-Api-Call-Limit", "40/40");
+
             // Act & Assert - Use up all REST requests
-            for (int i = 0; i < 40; i++) {
-                rateLimitHandler.canMakeRequest(endpoint, RateLimitHandler.RequestType.REST);
-            }
+            rateLimitHandler.recordRequest(endpoint, requestType, responseHeaders);
+            rateLimitHandler.canMakeRequest(endpoint, requestType);
             
             // REST should be blocked
             assertFalse(rateLimitHandler.canMakeRequest(endpoint, RateLimitHandler.RequestType.REST));
@@ -284,11 +290,12 @@ class RateLimitHandlerTest {
             // Arrange
             String endpoint = "/products.json";
             RateLimitHandler.RequestType requestType = RateLimitHandler.RequestType.REST;
+            HttpHeaders responseHeaders = new HttpHeaders();
+            responseHeaders.add("X-Shopify-Shop-Api-Call-Limit", "40/40");
             
             // Use up all requests
-            for (int i = 0; i < 40; i++) {
-                rateLimitHandler.canMakeRequest(endpoint, requestType);
-            }
+            rateLimitHandler.recordRequest(endpoint, requestType, responseHeaders);
+            rateLimitHandler.canMakeRequest(endpoint, requestType);
             
             // Act
             Duration delay = rateLimitHandler.getOptimalDelay(endpoint, requestType);

@@ -53,7 +53,7 @@ public class HttpClientWrapper {
         int attempt = 0;
         Exception lastException = null;
         
-        while (attempt < config.getMaxRetries()) {
+        while (attempt <= config.getMaxRetries()) {
             try {
                 return executeRequest(request);
             } catch (HttpClientErrorException e) {

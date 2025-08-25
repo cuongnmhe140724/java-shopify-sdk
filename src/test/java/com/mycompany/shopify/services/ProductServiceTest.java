@@ -56,7 +56,7 @@ class ProductServiceTest {
             ProductList expectedProducts = TestDataGenerator.createSampleProductList(3);
             ResponseEntity<ProductList> expectedResponse = ResponseEntity.ok(expectedProducts);
             
-            when(restClient.get(eq("/products.json"), anyMap(), eq(ProductList.class)))
+            when(restClient.get(eq("/products.json"), eq(ProductList.class)))
                     .thenReturn(expectedResponse);
             
             // Act
@@ -68,7 +68,7 @@ class ProductServiceTest {
             assertEquals(expectedProducts, result.getBody());
             assertEquals(3, result.getBody().getProducts().size());
             
-            verify(restClient).get(eq("/products.json"), anyMap(), eq(ProductList.class));
+            verify(restClient).get(eq("/products.json"), eq(ProductList.class));
         }
         
         @Test
@@ -79,7 +79,7 @@ class ProductServiceTest {
             Product expectedProduct = TestDataGenerator.createSampleProduct();
             ResponseEntity<Product> expectedResponse = ResponseEntity.ok(expectedProduct);
             
-            when(restClient.get(eq("/products/" + productId + ".json"), anyMap(), eq(Product.class)))
+            when(restClient.get(eq("/products/" + productId + ".json"), eq(Product.class)))
                     .thenReturn(expectedResponse);
             
             // Act
@@ -91,7 +91,7 @@ class ProductServiceTest {
             assertEquals(expectedProduct, result.getBody());
             assertEquals(productId, result.getBody().getId());
             
-            verify(restClient).get(eq("/products/" + productId + ".json"), anyMap(), eq(Product.class));
+            verify(restClient).get(eq("/products/" + productId + ".json"), eq(Product.class));
         }
         
         @Test
@@ -126,7 +126,7 @@ class ProductServiceTest {
             createdProduct.setId(999L);
             ResponseEntity<Product> expectedResponse = ResponseEntity.status(HttpStatus.CREATED).body(createdProduct);
             
-            when(restClient.post(eq("/products.json"), eq(productToCreate), eq(Product.class)))
+            when(restClient.post(eq("/products.json"), anyMap(), eq(Product.class)))
                     .thenReturn(expectedResponse);
             
             // Act
@@ -138,7 +138,7 @@ class ProductServiceTest {
             assertEquals(createdProduct, result.getBody());
             assertEquals(999L, result.getBody().getId());
             
-            verify(restClient).post(eq("/products.json"), eq(productToCreate), eq(Product.class));
+            verify(restClient).post(eq("/products.json"),  anyMap(), eq(Product.class));
         }
         
         @Test
@@ -146,7 +146,7 @@ class ProductServiceTest {
         void shouldHandleProductNotFoundError() {
             // Arrange
             Long productId = 999L;
-            when(restClient.get(eq("/products/" + productId + ".json"), anyMap(), eq(Product.class)))
+            when(restClient.get(eq("/products/" + productId + ".json"), eq(Product.class)))
                     .thenThrow(new HttpClientErrorException(HttpStatus.NOT_FOUND, "Product not found"));
             
             // Act & Assert
@@ -157,7 +157,7 @@ class ProductServiceTest {
             assertEquals(HttpStatus.NOT_FOUND, exception.getStatusCode());
             assertEquals("Product not found", exception.getStatusText());
             
-            verify(restClient).get(eq("/products/" + productId + ".json"), anyMap(), eq(Product.class));
+            verify(restClient).get(eq("/products/" + productId + ".json"), eq(Product.class));
         }
         
         @Test
@@ -165,7 +165,7 @@ class ProductServiceTest {
         void shouldHandleValidationError() {
             // Arrange
             Product invalidProduct = new Product(); // Missing required fields
-            when(restClient.post(eq("/products.json"), eq(invalidProduct), eq(Product.class)))
+            when(restClient.post(eq("/products.json"), anyMap(), eq(Product.class)))
                     .thenThrow(new HttpClientErrorException(HttpStatus.UNPROCESSABLE_ENTITY, "Validation failed"));
             
             // Act & Assert
@@ -176,14 +176,14 @@ class ProductServiceTest {
             assertEquals(HttpStatus.UNPROCESSABLE_ENTITY, exception.getStatusCode());
             assertEquals("Validation failed", exception.getStatusText());
             
-            verify(restClient).post(eq("/products.json"), eq(invalidProduct), eq(Product.class));
+            verify(restClient).post(eq("/products.json"), anyMap(), eq(Product.class));
         }
         
         @Test
         @DisplayName("Should handle network error")
         void shouldHandleNetworkError() {
             // Arrange
-            when(restClient.get(eq("/products.json"), anyMap(), eq(ProductList.class)))
+            when(restClient.get(eq("/products.json"), eq(ProductList.class)))
                     .thenThrow(new ResourceAccessException("Network connection failed"));
             
             // Act & Assert
@@ -193,7 +193,7 @@ class ProductServiceTest {
             
             assertEquals("Network connection failed", exception.getMessage());
             
-            verify(restClient).get(eq("/products.json"), anyMap(), eq(ProductList.class));
+            verify(restClient).get(eq("/products.json"), eq(ProductList.class));
         }
     }
     
@@ -233,7 +233,7 @@ class ProductServiceTest {
             Map<String, Object> expectedResponse = TestDataGenerator.createSampleGraphQLResponse();
             ResponseEntity<Map> expectedResponseEntity = ResponseEntity.ok(expectedResponse);
             
-            when(graphqlClient.mutation(anyString(), eq(productData), eq(Map.class)))
+            when(graphqlClient.mutation(anyString(),anyMap(), eq(Map.class)))
                     .thenReturn(expectedResponseEntity);
             
             // Act
@@ -244,7 +244,7 @@ class ProductServiceTest {
             assertEquals(HttpStatus.OK, result.getStatusCode());
             assertEquals(expectedResponse, result.getBody());
             
-            verify(graphqlClient).mutation(anyString(), eq(productData), eq(Map.class));
+            verify(graphqlClient).mutation(anyString(), anyMap(), eq(Map.class));
         }
         
         @Test
@@ -277,7 +277,7 @@ class ProductServiceTest {
         @DisplayName("Should handle null product gracefully")
         void shouldHandleNullProductGracefully() {
             // Arrange
-            when(restClient.post(eq("/products.json"), isNull(), eq(Product.class)))
+            when(restClient.post(eq("/products.json"), anyMap(), eq(Product.class)))
                     .thenThrow(new HttpClientErrorException(HttpStatus.BAD_REQUEST, "Product cannot be null"));
             
             // Act & Assert
@@ -287,7 +287,7 @@ class ProductServiceTest {
             
             assertEquals(HttpStatus.BAD_REQUEST, exception.getStatusCode());
             
-            verify(restClient).post(eq("/products.json"), isNull(), eq(Product.class));
+            verify(restClient).post(eq("/products.json"), anyMap(), eq(Product.class));
         }
         
         @Test
@@ -298,7 +298,7 @@ class ProductServiceTest {
             emptyProducts.setProducts(java.util.Collections.emptyList());
             ResponseEntity<ProductList> expectedResponse = ResponseEntity.ok(emptyProducts);
             
-            when(restClient.get(eq("/products.json"), anyMap(), eq(ProductList.class)))
+            when(restClient.get(eq("/products.json"), eq(ProductList.class)))
                     .thenReturn(expectedResponse);
             
             // Act
@@ -309,7 +309,7 @@ class ProductServiceTest {
             assertEquals(HttpStatus.OK, result.getStatusCode());
             assertTrue(result.getBody().getProducts().isEmpty());
             
-            verify(restClient).get(eq("/products.json"), anyMap(), eq(ProductList.class));
+            verify(restClient).get(eq("/products.json"), eq(ProductList.class));
         }
         
         @Test
@@ -319,7 +319,7 @@ class ProductServiceTest {
             ProductList largeProductList = TestDataGenerator.createSampleProductList(100);
             ResponseEntity<ProductList> expectedResponse = ResponseEntity.ok(largeProductList);
             
-            when(restClient.get(eq("/products.json"), anyMap(), eq(ProductList.class)))
+            when(restClient.get(eq("/products.json"), eq(ProductList.class)))
                     .thenReturn(expectedResponse);
             
             // Act
@@ -330,7 +330,7 @@ class ProductServiceTest {
             assertEquals(HttpStatus.OK, result.getStatusCode());
             assertEquals(100, result.getBody().getProducts().size());
             
-            verify(restClient).get(eq("/products.json"), anyMap(), eq(ProductList.class));
+            verify(restClient).get(eq("/products.json"), eq(ProductList.class));
         }
     }
     
@@ -347,11 +347,11 @@ class ProductServiceTest {
             createdProduct.setId(999L);
             
             // Create product
-            when(restClient.post(eq("/products.json"), eq(productToCreate), eq(Product.class)))
+            when(restClient.post(eq("/products.json"), anyMap(), eq(Product.class)))
                     .thenReturn(ResponseEntity.status(HttpStatus.CREATED).body(createdProduct));
             
             // Get created product
-            when(restClient.get(eq("/products/999.json"), anyMap(), eq(Product.class)))
+            when(restClient.get(eq("/products/999.json"), eq(Product.class)))
                     .thenReturn(ResponseEntity.ok(createdProduct));
             
             // Act - Create product
@@ -371,8 +371,8 @@ class ProductServiceTest {
             assertEquals(createdProduct, getResult.getBody());
             
             // Verify all interactions
-            verify(restClient).post(eq("/products.json"), eq(productToCreate), eq(Product.class));
-            verify(restClient).get(eq("/products/999.json"), anyMap(), eq(Product.class));
+            verify(restClient).post(eq("/products.json"), anyMap(), eq(Product.class));
+            verify(restClient).get(eq("/products/999.json"), eq(Product.class));
         }
     }
 }

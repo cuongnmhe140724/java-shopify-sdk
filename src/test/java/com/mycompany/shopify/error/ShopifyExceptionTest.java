@@ -270,7 +270,7 @@ class ShopifyExceptionTest {
             assertFalse(authException.isValidationError());
             
             assertFalse(authzException.isRateLimitError());
-            assertFalse(authzException.isAuthorizationError());
+            assertTrue(authzException.isAuthorizationError());
             assertTrue(authzException.isAuthorizationError());
             assertFalse(authzException.isValidationError());
             
