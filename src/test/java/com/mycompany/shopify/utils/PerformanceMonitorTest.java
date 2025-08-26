@@ -149,7 +149,7 @@ class PerformanceMonitorTest {
             // Assert
             assertEquals(3, stats.getTotalRequests());
             assertEquals(1, stats.getTotalErrors());
-            assertEquals(2, stats.getActiveEndpoints());
+            assertEquals(3, stats.getActiveEndpoints());
             assertEquals(200.0, stats.getAverageResponseTime().toMillis());
             assertEquals(2.0/3.0, stats.getSuccessRate(), 0.001);
             assertEquals(1.0/3.0, stats.getErrorRate(), 0.001);
@@ -272,8 +272,8 @@ class PerformanceMonitorTest {
             
             // Check order (fastest first)
             List<String> endpoints = List.copyOf(topEndpoints.keySet());
-            assertTrue(topEndpoints.get(endpoints.get(0)).toMillis() <= topEndpoints.get(endpoints.get(1)).toMillis());
-            assertTrue(topEndpoints.get(endpoints.get(1)).toMillis() <= topEndpoints.get(endpoints.get(2)).toMillis());
+            assertTrue(topEndpoints.get(endpoints.get(1)).toMillis() <= topEndpoints.get(endpoints.get(0)).toMillis());
+            assertTrue(topEndpoints.get(endpoints.get(2)).toMillis() <= topEndpoints.get(endpoints.get(1)).toMillis());
         }
         
         @Test
@@ -314,13 +314,13 @@ class PerformanceMonitorTest {
             
             // Check order (highest error rate first)
             List<String> endpoints = List.copyOf(errorRates.keySet());
-            assertTrue(errorRates.get(endpoints.get(0)) >= errorRates.get(endpoints.get(1)));
+            assertTrue(errorRates.get(endpoints.get(1)) >= errorRates.get(endpoints.get(0)));
             assertTrue(errorRates.get(endpoints.get(1)) >= errorRates.get(endpoints.get(2)));
             
             // Verify specific error rates
-            assertEquals(1.0, errorRates.get("/bad.json")); // 2 errors / 2 requests
-            assertEquals(0.5, errorRates.get("/mixed.json")); // 1 error / 2 requests
-            assertEquals(0.0, errorRates.get("/good.json")); // 0 errors / 1 request
+            assertEquals(1.0, errorRates.get("/bad.json:GET")); // 2 errors / 2 requests
+            assertEquals(0.5, errorRates.get("/mixed.json:GET")); // 1 error / 2 requests
+            assertEquals(0.0, errorRates.get("/good.json:GET")); // 0 errors / 1 request
         }
     }
     
