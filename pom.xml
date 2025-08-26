@@ -18,9 +18,8 @@
     <developers>
         <developer>
             <name>Development Team</name>
-            <email>dev@mycompany.com</email>
-            <organization>MyCompany</organization>
-            <organizationUrl>https://mycompany.com</organizationUrl>
+            <email>dev@cuongnm.com</email>
+            <organization>CuongNM</organization>
         </developer>
     </developers>
     
@@ -33,20 +32,20 @@
     </licenses>
     
     <scm>
-        <connection>scm:git:git://github.com/mycompany/shopify-sdk.git</connection>
-        <developerConnection>scm:git:ssh://github.com:mycompany/shopify-sdk.git</developerConnection>
-        <url>https://github.com/mycompany/shopify-sdk</url>
+        <connection>scm:git:git://github.com/cuongnmhe140724/shopify-sdk.git</connection>
+        <developerConnection>scm:git:ssh://github.com:cuongnmhe140724/shopify-sdk.git</developerConnection>
+        <url>https://github.com/cuongnmhe140724/shopify-sdk</url>
         <tag>HEAD</tag>
     </scm>
     
     <issueManagement>
         <system>GitHub</system>
-        <url>https://github.com/mycompany/shopify-sdk/issues</url>
+        <url>https://github.com/cuongnmhe140724/shopify-sdk/issues</url>
     </issueManagement>
     
     <ciManagement>
         <system>GitHub Actions</system>
-        <url>https://github.com/mycompany/shopify-sdk/actions</url>
+        <url>https://github.com/cuongnmhe140724/shopify-sdk/actions</url>
     </ciManagement>
     
     <!-- Distribution Management for Maven Central -->
